@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -19,35 +16,34 @@ int main(int argc , char** argv){
 	int n;
 
 	if ((listenfd = socket(AF_INET, SOCK_STREAM, 0)) == -1){
-		//printf("create socket error: %s(errno:%d)\n",strerror(errno),errno);
-		cout << "create socket error:"<< strerror(errno) <<"(errno:" << errno << ")" << endl;
+		cout << "create socket error!" << endl;
 		return 0;
 	}
 
 	memset(&servaddr , 0 ,sizeof(servaddr));
-	servaddr.sin_family = AF_INET;  //must be "AF_INET"
+	servaddr.sin_family = AF_INET;
 	servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	servaddr.sin_port = htons(6666);
-
+	
 	if(bind(listenfd , (struct sockaddr*)&servaddr, sizeof(servaddr)) == -1){
-		printf("bind socket error:%s(errno:%d)\n", strerror(errno), errno);
+		cout << "bind socket error!"<< endl;
 		return 0;
 	}
 
 	if (listen(listenfd , 10 == -1)){
-		printf("listen socket error:%s(errno:%d)\n", strerror(errno), errno);
+		cout << "listen socket error!" << endl;
 		return 0;
 	}
 
-	printf("----------waiting for client`s request--------\n");
+	cout <<"----------waiting for client`s request----------" << endl;
 	while(1){
 		if ((connfd = accept(listenfd,(struct sockaddr*)NULL, NULL)) == -1){
-			printf("accept socket error:%s(errno:%d)",strerror(errno),errno);
+			cout << "accept socket error!"<< endl;
 			continue;
 		}
 		n = recv(connfd , buff , MAXLINE , 0);
 		buff[n] = '\0';
-		printf("recv msg from client:%s\n", buff);
+		cout << "recv msg from client:" << buff << endl;
 		close(connfd);
 	}
 	close(listenfd);
